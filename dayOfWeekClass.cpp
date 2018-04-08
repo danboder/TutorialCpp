@@ -9,17 +9,15 @@ ____________
 #include <iostream>
 using namespace std;
 
-enum Months {January = 1, February, March, April, May, June, July, August, September, October, November, December};
-
 ///Function List
 int yearsPass(int year);
-int monthsPass(Months month, int year);
-string whatDay(int count);
+int monthsPass(int month);
+string whatDay(int input);
 
 ///Classes
 class Year{
 public:
-	int index, dayCount;
+	int index;
 	bool isLeap;
 
 	void setLeap(){
@@ -37,28 +35,26 @@ public:
 			isLeap = false;
 		}
 	}
-
-	void setDayCount(){
-		if(isLeap){
-			dayCount = 366;
-		} else {
-			dayCount = 365;
-		}
-	}
 };
 ///Main
 int main(){
 	// AD started on Saturday, January 1st, 1 AD.
 
 	// My birthday //
-	int birthYear = 1994;
-	Months birthMonth = December;
-	int birthDayInt = 6; 
+	int birthYear = 2;
+
+	Year birth;
+	birth.index = birthYear;
+	birth.setLeap();
+
+	int birthMonth = 1;
+	int birthDayInt = 1; 
 
 	cout << "I was born on a Tuesday, lets see if my function works!" << endl;
 	int count = 0;
 	count += yearsPass(birthYear);
-	count += monthsPass(birthMonth, birthYear);
+	count += monthsPass(birthMonth);
+	if(birth.isLeap && birthMonth != 1 && birthMonth != 2) count += 1;
 	count += birthDayInt;
 
 	cout << "Is " << whatDay(count) << " the right day?" << endl;
@@ -74,37 +70,58 @@ int yearsPass(int year){
 		Year current;
 		current.index = i;
 		current.setLeap();
-		current.setDayCount();
-		output += current.dayCount;
+		if(current.isLeap){
+			output += 366;
+		} else {
+			output += 365;
+		}
 	}
 	return output;
 }
 
-int monthsPass(Months month, int year){
-	int count = 0;
-	Year current;
-	current.index = year;
-	current.setLeap();
-
-	if (month == February) count += 31;
-	if (month == March) count += (31 + 28);
-	if (month == April) count += ((2 * 31) + 28);
-	if (month == May) count += ((3 * 31) + 28);
-	if (month == June) count += ((3 * 31) + 30 + 28);
-	if (month == July) count += ((3 * 31) + (2 * 30) + 28);
-	if (month == August) count += ((4 * 31) + (2 * 30) + 28);
-	if (month == September) count += ((5 * 31) + (2 * 30) + 28);
-	if (month == October) count += ((5 * 31) + (3 * 30) + 28);
-	if (month == November) count += ((6 * 31) + (3 * 30) + 28);
-	if (month == December) count += ((6 * 31) + (4 * 30) + 28);
-
-	if(current.isLeap && (month != January || month != February)) count += 1;
+int monthsPass(int month){
+	int count = 0; // Add 0 for Jan
+//30 is Sept, Apr, June, Nov
+	if(month > 1){ //Add: Jan
+		count += 31;
+		if (month > 2){ // Feb
+			count += 28;
+			if(month > 3){ // Mar
+				count += 31;
+				if(month > 4){ // Apr
+					count += 30;
+					if(month > 5){ // May
+						count += 31;
+						if(month > 6){ // June
+							count += 30;
+							if(month > 7){ // July
+								count += 31;
+								if(month > 8){ // Aug
+									count += 31;
+									if(month > 9){ // Sept
+										count += 30;
+										if(month > 10){ //Oct
+											count += 31;
+											if(month > 11){ // Nov
+												count += 30;
+											}
+										}
+									} 
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return count;
 }
 
-string whatDay(int count){
+string whatDay(int input){
 	// count = 1 => Saturday
-	int index = count % 7;
-	switch(index){
+	int i = input%7;
+	switch(i){
 		case 1: return "Saturday";
 		case 2: return "Sunday";
 		case 3: return "Monday";
@@ -112,6 +129,5 @@ string whatDay(int count){
 		case 5: return "Wednesday";
 		case 6: return "Thursday";
 		case 0: return "Friday";
-
 	}
 }
